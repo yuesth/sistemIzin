@@ -9,7 +9,6 @@ var client = mongo.mongoClient;
 var uri = mongo.uri;
 var fire = require("./fire.js");
 var fire2 = fire.configFb;
-var db = fire2.firestore();
 var auth = fire2.auth();
 
 
