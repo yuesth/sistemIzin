@@ -11,8 +11,7 @@ var fire = require("./fire.js");
 var fire2 = fire.configFb;
 var db = fire2.firestore();
 var auth = fire2.auth();
-// const { runInContext } = require("vm");
-// const { data, makeArray } = require("jquery");
+
 
 app.use(
     session({
@@ -61,17 +60,6 @@ app.post("/login", (req, res) => {
                     }
                 });
             });
-            // db.collection('users').doc(auth.currentUser.uid).get().then((doc) => {
-            //     if (doc.data().role == "admin") {
-            //         req.session.homeadmin = "wzady2221";
-            //         req.session.Unamehomeadmin = doc.data().username;
-            //         res.redirect("/homeadmin");
-            //     } else {
-            //         req.session.Unamehome = doc.data().username;
-            //         req.session.home = "wzady3576";
-            //         res.redirect("/home");
-            //     }
-            // });
         })
         .catch(function (err) {
             res.render("login", {
@@ -177,31 +165,6 @@ app.post("/register", (req, res) => {
                 });
             });
     }
-    // .then((user) => {
-    //   var getScrapData = scrapData(req.body.vpsSignup);
-    //   db.collection("users").doc(user.user.uid).set({
-    //     fullname: req.body.fullnameSignup,
-    //     username: req.body.usernameSignup,
-    //     email: req.body.emailSignup,
-    //     passwd: req.body.passwdSignup,
-    //     nim: req.body.nimSignup,
-    //     prodi: req.body.prodiSignup,
-    //     smt: req.body.smtSignup,
-    //     matkul: getScrapData
-    //   }).then(() => {
-    //     db.collection('izin').doc(user.user.uid).set({
-    //       aktifIzin: false
-    //     });
-    //     req.session.Unamehome = req.body.usernameSignup;
-    //     req.session.home = "wzady3576";
-    //     res.redirect("/home");
-    //   });
-    // })
-    // .catch(function (err) {
-    //   res.render("register", {
-    //     errMessageSignup: err,
-    //   });
-    // });
 });
 
 // --------------------------------------------------------------REGISTER/HOME
@@ -369,23 +332,9 @@ app.post('/home/isiform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (req
             };
             await client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
                 client.db('sistemizin').collection('izin').updateOne({ userAuth: user.uid }, {
-                    $set: { aktifIzin: true}, $addToSet: {dataIzin: data}
+                    $set: { aktifIzin: true }, $addToSet: { dataIzin: data }
                 });
-                // const getIzin = client.db('sistemizin').collection('izin').find({ userAuth: user.uid });
-                // getIzin.forEach(obj => {
-                //     var idx;
-                //     for (var j = 0; j < obj.matkul.length; j++) {
-                //         if (obj.matkul[j].kodematkul == req.params.kodematkul) {
-                //             idx = j;
-                //             break;
-                //         }
-                //     }
-                // })
             });
-            // await db.collection('izin').doc(user.uid).update({
-            //     aktifIzin: true,
-            //     dataIzin: data
-            // });
             res.redirect('/home/' + req.params.namamatkul + '/' + req.params.kodematkul + '/' + req.params.kelasmatkul + '/' + req.params.dosenmatkul);
         };
         mulaiIzin(user);
@@ -402,10 +351,6 @@ app.post('/home/uploadform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (
             var tanggal2 = new Date().getDate() + "-" + new Date().getMonth() + "-" + new Date().getFullYear();
             var waktu2 = new Date().getHours() + "." + new Date().getMinutes();
             waktu = tanggal2 + "," + waktu2;
-            // var data = {
-            //     timeUploadform: tanggal2 + "," + waktu2,
-            //     statusUploadform: "active"
-            // };
             await client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
                 const getIzin = client.db('sistemizin').collection('izin').find({ userAuth: user.uid });
                 getIzin.forEach(obj => {
@@ -437,10 +382,6 @@ app.post('/home/dosenform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (r
             var tanggal3 = new Date().getDate() + "-" + new Date().getMonth() + "-" + new Date().getFullYear();
             var waktu3 = new Date().getHours() + "." + new Date().getMinutes();
             waktu = tanggal3 + "," + waktu3;
-            // var data = {
-            //     timeDosenform: tanggal3 + "," + waktu3,
-            //     statusDosenform: "active"
-            // };
             client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
                 const getIzin = client.db('sistemizin').collection('izin').find({ userAuth: user.uid });
                 getIzin.forEach(obj => {
@@ -462,15 +403,15 @@ app.post('/home/dosenform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (r
     };
 });
 
-app.get('/riwayat',(req,res)=>{
+app.get('/riwayat', (req, res) => {
     if (!req.session.home) {
         res.redirect("login");
     } else {
         var user = auth.currentUser;
-        const mulaiRiwayat = async (user)=>{
-            client.connect(uri, {useUnifiedTopology:true}, (err,client)=>{
-                const getRiwayat = client.db('sistemizin').collection('izin').find({ userAuth: user.uid});
-                getRiwayat.forEach(obj=>{
+        const mulaiRiwayat = async (user) => {
+            client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
+                const getRiwayat = client.db('sistemizin').collection('izin').find({ userAuth: user.uid });
+                getRiwayat.forEach(obj => {
                     res.render("riwayat", {
                         username: req.session.Unamehome,
                         matkulIzin: obj.dataIzin
