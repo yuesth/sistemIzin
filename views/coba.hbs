@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coba</title>
+</head>
+
+<body>
+    <form method="post">
+        <input type="text" id="iduname" name="uname" placeholder="username">
+        <input type="email" id="idemail" name="email", placeholder="email">
+        <input type="password" id="idpasswd" name="passwd" placeholder="password">
+        <button type="submit">Submit</button>
+    </form>
+
+    <div class="container">
+        <p>
+            username: {{username}}
+        </p>
+        <p>
+            email: {{email}}
+        </p>
+        <p>
+            password: {{passwd}}
+        </p>
+    </div>
+</body>
+
+</html>

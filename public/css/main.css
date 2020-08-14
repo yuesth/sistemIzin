@@ -1,0 +1,15 @@
+body{
+    padding-top: 4rem;
+}
+
+#signup{
+    margin-top:30px;
+}
+
+#errMessage{
+    margin-top: 20px;
+}
+
+#license{
+    margin-top: 50px;
+}

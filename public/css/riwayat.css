@@ -1,0 +1,8 @@
+.container{
+    margin-top: 20px;
+}
+
+thead tr{
+    background-color: rgb(42, 126, 182);
+    color: white;
+}

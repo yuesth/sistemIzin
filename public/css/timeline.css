@@ -1,0 +1,118 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica, sans-serif;
+  }
+  body {
+    background: #ffffff;
+  }
+  section#timeline {
+    width: 90%;
+    margin: 20px 5px;
+    position: relative;
+  }
+  section#timeline:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 885px;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: rgba(10, 3, 3, 0.918);
+  }
+  section#timeline article {
+    width: 100%;
+    margin: 0 0 40px 0;
+    position: relative;
+  }
+  section#timeline article:after {
+    content: '';
+    display: block;
+    clear: both;  
+  }
+  section#timeline article div.inner {
+    width: 80%;
+    float: left;
+    margin: 0 0 0 5px;
+    border-radius: 7px;
+    border: 2px solid rgb(5, 4, 4);
+    z-index: 9999;
+  }
+
+  section#timeline article div.inner span.date {
+    display: block;
+    width: 40px;
+    height: 40px;;
+    position: absolute;
+    top: 0;
+    left: 868px;
+    border-radius: 100%;
+    background: rgb(228, 48, 16);
+    color: rgb(255, 255, 255);
+    padding-top: 10px;
+  }
+  section#timeline article div.inner span.date:hover{
+    background: rgb(177, 37, 12);
+  }
+  section#timeline article div.inner span.date span {
+    display: block;
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  section#timeline article div.inner h2 {
+    padding: 10px 0 0 10px;
+    margin: 0;
+    color: #000000;
+    font-size: 20px;
+    letter-spacing: -1px;
+    border-radius: 6px 6px 0 0;
+    text-decoration: none;
+    position: relative;
+  }
+  section#timeline article div.inner h2:hover{
+    color: rgba(31, 108, 224, 0.568);
+    text-decoration: none;
+  }
+  section#timeline article div.inner h2:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: -45px;
+    width: 45px; 
+    height: 5px;
+    background: rgb(7, 51, 116);
+  }
+  section#timeline article div.inner p {
+    padding: 15px;
+    margin: 0;
+    font-size: 14px;
+    background: #fff;
+    color: #656565;
+    border-radius: 0 0 6px 6px;
+  }
+  
+  section#timeline article div.inner h2 {
+    background: #ffffff;
+  }
+
+
+  #isiform, #uploadform, #kirimemail{
+    border: 1px solid black;
+    background: rgb(51, 229, 241);
+    width: 70%;
+    margin-left: 20px;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+    transition: 0.7s;
+    line-height: 30px;
+  }
+  #uploadform, #kirimemail{
+    margin-bottom: 10px;
+  }
+
+
+
