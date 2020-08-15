@@ -1,5 +1,5 @@
 # sistemIzin
-Sistem Izin Absensi dengan Mongo DB locally dan Node JS
+SistemIzin using Mongo DB locally and Node JS
 
 Step to testing:
 1. Go to clone this repo
