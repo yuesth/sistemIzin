@@ -10,6 +10,7 @@ var uri = mongo.uri;
 var fire = require("./fire.js");
 var fire2 = fire.configFb;
 var auth = fire2.auth();
+var nm = require('nodemailer');
 
 
 app.use(
@@ -265,6 +266,8 @@ app.get('/home/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (req, res) =>
                                     warna_uploadform: 'rgb(92,184,92)',
                                     belum_uploadform: 'none',
                                     sudah_uploadform: 'block',
+                                    belum_dosenform: 'block',
+                                    sudah_dosenform: 'none',
                                     time_isiform: obj1.dataIzin[idx].timeIsiform,
                                     time_uploadform: obj1.dataIzin[idx].timeUploadform,
                                 });
@@ -281,6 +284,10 @@ app.get('/home/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (req, res) =>
                                     warna_isiform: 'rgb(92,184,92)',
                                     belum_isiform: 'none',
                                     sudah_isiform: 'block',
+                                    belum_uploadform: 'block',
+                                    sudah_uploadform: 'none',
+                                    belum_dosenform: 'block',
+                                    sudah_dosenform: 'none',
                                     time_isiform: obj1.dataIzin[idx].timeIsiform,
                                 });
                             }
@@ -371,17 +378,30 @@ app.post('/home/uploadform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (
     };
 });
 
+var rand, host, link;
 app.post('/home/dosenform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (req, res) => {
     if (!req.session.home) {
         res.redirect('login')
     }
     else {
+        rand = Math.floor((Math.random() * 100000000) + 54);
+        host = req.get('host');
+        link = "http://" + req.get('host') + "/verify" + "/" + req.params.namamatkul + "/" + req.params.kodematkul + "/" + req.params.kelasmatkul + "/" + req.params.dosenmatkul + "?id=" + rand;
         var user = auth.currentUser;
         const mulaiIzin = async (user) => {
             var tanggal3 = new Date().getDate() + "-" + new Date().getMonth() + "-" + new Date().getFullYear();
             var waktu3 = new Date().getHours() + "." + new Date().getMinutes();
             waktu = tanggal3 + "," + waktu3;
-            client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
+            var transport = nm.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                secure: true,
+                auth: {
+                    user: 'yues.963@gmail.com',
+                    pass: 'Wzady3576'
+                }
+            });
+            await client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
                 const getIzin = client.db('sistemizin').collection('izin').find({ userAuth: user.uid });
                 getIzin.forEach(obj => {
                     var idx;
@@ -391,8 +411,36 @@ app.post('/home/dosenform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (r
                             break;
                         }
                     }
-                    client.db('sistemizin').collection('izin').updateOne({ userAuth: user.uid }, {
-                        $set: { [`dataIzin.${idx}.timeDosenform`]: waktu, [`dataIzin.${idx}.statusDosenform`]: "active" }
+                    let mailOptions = {
+                        from: '"SistemIzin" <sistemizin@ugm.ac.id>',
+                        to: "alrasyidharun308@gmail.com",
+                        subject: "<no-reply> Verifikasi izin mahasiswa",
+                        html: `<table class="container" cellspacing="0" cellpadding="0">\
+                        <tr>\
+                            <td>\
+                                <h2>SistemIzin Mahasiswa</h2>\
+                                <p class="preheader" style:float:right;>`+ new Date().toDateString() + `</p>\
+                                <div class="wrapper">\
+                                    <p class="text margin">Salam Hormat,</p> \
+                                    <p>Dengan ini kami sampaikan bahwa: </p> \
+                                    <p>Nama:`+ obj.dataIzin[idx].namaIzin + `</p>\
+                                    <p>NIU:`+ obj.dataIzin[idx].nimIzin + `</p>\
+                                    <p>Berhalangan hadir pada kelas mata kuliah <strong>`+ obj.dataIzin[idx].namamatkulIzin + `</strong> kelas <strong>` + obj.dataIzin[idx].kelasmatkulIzin + `</strong> dikarenakan alasan <strong>` + obj.dataIzin[idx].inputperluIzin + `,</strong>\
+                                    dimulai dari tanggal <strong>`+ obj.dataIzin[idx].tanggalIzin + ` selama ` + obj.dataIzin[idx].durasiIzin + ` hari</strong>. Harap dimaklumi, dan atas perhatiannya, kami ucapkan terima kasih.</p>\
+                                    <p>Berikut ini kami lampirkan attachment surat fisik sebagai tanda bukti.</p>\
+                                    <p>Dimohon untuk klik link di bawah ini, ketika dosen menyetujui izin mahasiswa.</p><br>\
+                                    <a href="http://${host}/verify/${req.params.namamatkul}/${req.params.kodematkul}/${req.params.kelasmatkul}/${req.params.dosenmatkul}?id=${rand}">${link}</a>\
+                                </div>\
+                            </td>\
+                        </tr>\
+                    </table>`,
+                    }
+                    transport.sendMail(mailOptions, (err, resp) => {
+                        if (err) console.log("error sending email dosen");
+                        else {
+                            resp.end('sent')
+                            console.log("success sending email dosen")
+                        }
                     });
                 });
             })
@@ -401,6 +449,45 @@ app.post('/home/dosenform/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (r
         mulaiIzin(user);
     };
 });
+
+app.get('/verify/:namamatkul/:kodematkul/:kelasmatkul/:dosenmatkul', (req, res) => {
+    var user = auth.currentUser;
+    const mulaiverify = async (user) => {
+        console.log("host: "+host);
+        console.log('protocol verify: '+req.protocol);
+        console.log("host verify: "+req.get("host"));
+        if ((req.protocol + "://" + req.get('host')) == ("http://" + host)) {
+            console.log("Domain sama");
+            if (req.query.id == rand) {
+                console.log("email terverifikasi");
+                client.connect(uri, { useUnifiedTopology: true }, (err, client) => {
+                    const getIzin = client.db('sistemizin').collection('izin').find({ userAuth: user.uid });
+                    getIzin.forEach(obj => {
+                        var idx;
+                        for (var j = 0; j < obj.dataIzin.length; j++) {
+                            if (obj.dataIzin[j].kodematkulIzin == req.params.kodematkul) {
+                                idx = j;
+                                break;
+                            }
+                        }
+                        client.db('sistemizin').collection('izin').updateOne({ userAuth: user.uid }, {
+                            $set: { [`dataIzin.${idx}.timeDosenform`]: waktu, [`dataIzin.${idx}.statusDosenform`]: "active" }
+                        });
+                    })
+                });
+                res.redirect('/home/' + req.params.namamatkul + '/' + req.params.kodematkul + '/' + req.params.kelasmatkul + '/' + req.params.dosenmatkul);
+            }
+            else {
+                console.log("email is not verified");
+                res.end("<h1>Bad Request</h1>");
+            }
+        }
+        else {
+            res.end("<h1>Request is from unknown source");
+        }
+    }
+    mulaiverify(user);
+})
 
 app.get('/riwayat', (req, res) => {
     if (!req.session.home) {

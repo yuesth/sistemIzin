@@ -18,6 +18,10 @@
         #timeline:nth-of-type(2) #list_uploadfile #sudahuploadfile {
             display: none;
         }
+
+        #timeline:nth-of-type(3) #list_kirimemail #sudahkirimemail {
+            display: none;
+        }
     </style>
 </head>
 
@@ -224,7 +228,10 @@
                         <form method="POST" class="dosenForm">
                             <div class="form-row">
                                 <div class="custom-file">
-                                    <p>Kirim email lewat dosen hanya untuk alasan izin: <strong>Sakit</strong> dan
+                                    <p class="displat-4">
+                                        Kirim ke dosen: {{dosenmatkul}}
+                                    </p>
+                                    <p class=""Kirim email lewat dosen hanya untuk alasan izin: <strong>Sakit</strong> dan
                                         <strong>Keluarga dekat meninggal</strong> </p>
                                     <button type="submit" class="btn btn-danger" style="margin-top:10px;"
                                         name="kirimemail-btn" class="dosenBtn" formaction="/home/dosenform/{{namamatkul}}/{{kodematkul}}/{{kelasmatkul}}/{{dosenmatkul}}">Kirim email</button>
